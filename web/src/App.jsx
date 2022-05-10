@@ -16,6 +16,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import {
     faTimes,
     faSpinner,
+    faLink,
     faRightFromBracket,
 } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -31,13 +32,87 @@ library.add(
   faHeart,
   faSpinner,
   faRightFromBracket,
+  faLink,
 );
 
 const App = () => {
   const location = useLocation();
 
-  const [address, setAddress] = useState([]);
+  const [address, setAddress] = useState(null);
   const [myPlayers, setMyPlayers] = useState([]);
+  const [players, setPlayers] = useState([{
+    id: '0001',
+    name: 'Timothy Daniels',
+    position: 'CB',
+    rating: 88,
+    src: './img/players/1.png',
+  }, {
+    id: '0002',
+    name: 'Joe Smith',
+    position: 'LB',
+    rating: 57,
+    src: './img/players/2.png',
+  }, {
+    id: '0003',
+    name: 'John Neal',
+    position: 'RB',
+    rating: 60,
+    src: './img/players/3.png',
+  }, {
+    id: '0004',
+    name: 'Oscar Jones',
+    position: 'GK',
+    rating: 94,
+    src: './img/players/4.png',
+  }, {
+    id: '0005',
+    name: 'Philip Ray',
+    position: 'LW',
+    rating: 40,
+    src: './img/players/5.png',
+  }, {
+    id: '0006',
+    name: 'William Wilson',
+    position: 'RW',
+    rating: 44,
+    src: './img/players/6.png',
+  }, {
+    id: '0007',
+    name: 'Bradley Padilla',
+    position: 'CF',
+    rating: 79,
+    src: './img/players/7.png',
+  }, {
+    id: '0008',
+    name: 'Jeffrey Lamb',
+    position: 'CM',
+    rating: 82,
+    src: './img/players/8.png',
+  }, {
+    id: '0009',
+    name: 'Wesley Brown',
+    position: 'DM',
+    rating: 85,
+    src: './img/players/9.png',
+  }, {
+    id: '0010',
+    name: 'Steven White',
+    position: 'RB',
+    rating: 38,
+    src: './img/players/10.png',
+  }, {
+    id: '0011',
+    name: 'Stanley Horton',
+    position: 'DM',
+    rating: 20,
+    src: './img/players/11.png',
+  }, {
+    id: '0012',
+    name: 'Dale Vega',
+    position: 'CM',
+    rating: 16,
+    src: './img/players/12.png',
+  }]);
   const [popup, setPopup] = useState({ current: null, item: null });
 
   const onPopup = (current = null, item = null) => {
@@ -45,9 +120,10 @@ const App = () => {
 	};
 
   const onConnect = () => {
-    connectWallet().then((address) => {
-      setAddress(address['_address']);
-    });
+    setAddress('000000000000000000000000000000000211cf42');
+    // connectWallet().then((address) => {
+    //   setAddress(address['_address']);
+    // });
 	};
 
   // const onClaim = (playerId) => {
@@ -64,6 +140,7 @@ const App = () => {
   const onExit = () => {
     setMyPlayers([]);
     setAddress(null);
+    document.location.href = '/';
 	};
 
   return (
@@ -98,6 +175,7 @@ const App = () => {
           <Link
             to="/battles"
             className={location.pathname === '/battles' ? "sidebar_item active" : "sidebar_item"}
+            style={!address ? { color: '#c4c4c4' } : {}}
             onClick={(e)=> {
               if (!address) {
                 onPopup('auth');
@@ -111,6 +189,7 @@ const App = () => {
           <Link
             to="/marketplace"
             className={location.pathname === '/marketplace' ? "sidebar_item active" : "sidebar_item"}
+            style={!address ? { color: '#c4c4c4' } : {}}
             onClick={(e)=> {
               if (!address) {
                 onPopup('auth');
@@ -127,27 +206,16 @@ const App = () => {
         </div>
       </div>
       <div className="content">
-        <div className="header">
-          {address && (
-            <div className="header_block header_block_user">
-              <span>{address}</span>
-              <FontAwesomeIcon
-                icon={['fas', 'right-from-bracket']}
-                style={{ cursor: 'pointer' }}
-                onClick={onExit}
-              />
-            </div>
-          )}
-        </div>
         <Routes>
           <Route
             path="/"
             exact
             element={<Home
               onPopup={onPopup}
-              myPlayers={myPlayers}
               address={address}
+              onExit={onExit}
               onConnect={onConnect}
+              myPlayers={myPlayers}
             />}
           />
           <Route
@@ -155,7 +223,8 @@ const App = () => {
             exact
             element={<Battles
               onPopup={onPopup}
-              myPlayers={myPlayers}
+              address={address}
+              onExit={onExit}
             />}
           />
           <Route
@@ -163,6 +232,9 @@ const App = () => {
             exact
             element={<Marketplace
               onPopup={onPopup}
+              address={address}
+              onExit={onExit}
+              players={players}
               myPlayers={myPlayers}
             />}
           />
