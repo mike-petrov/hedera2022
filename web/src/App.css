@@ -299,13 +299,6 @@ select {
     text-align: center;
 }
 
-.popup_wrap {
-    overflow: hidden;
-    word-break: break-word;
-    font-size: 10px !important;
-    line-height: 12px !important;
-}
-
 .btn {
     display: block;
     color: #fff;
@@ -545,7 +538,7 @@ select {
 }
 
 .popup_icon {
-    font-size: 30px;
+    font-size: 50px;
     margin-top: 20px;
     display: flex;
     align-items: center;
@@ -573,8 +566,8 @@ select {
 
 .popup_subtitle {
     font-weight: 100;
-    margin: 0 5px 10px;
-    font-size: 18px;
+    margin: 20px 0 10px;
+    font-size: 20px;
     text-align: center;
 }
 
