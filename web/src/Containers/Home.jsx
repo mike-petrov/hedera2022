@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const Home = ({ onPopup, myPlayers, address, onConnect, onExit }) => {
+const Home = ({ onPopup, myPlayers, address, tokens, onConnect, onExit }) => {
   const [filter, setFilter] = useState('');
 
   const onFilter = (e) => {
@@ -13,9 +13,17 @@ const Home = ({ onPopup, myPlayers, address, onConnect, onExit }) => {
     <div className="container">
       <div className="header">
         <div className="title">Academy</div>
-        <div className="subtitle">Build a football institution</div>
+        <div className="subtitle">Your own football team</div>
         {address && (
             <div className="header_block">
+              <span style={{ background: '#3e4de5', display: 'flex', alignItems: 'center' }}>
+                <img src="./img/ball.png" alt="" />
+                <span>{tokens.balls}</span>
+              </span>
+              <span style={{ background: '#3e4de5', display: 'flex', alignItems: 'center' }}>
+                <img src="./img/goal.png" alt="" />
+                <span>{tokens.goals}</span>
+              </span>
               <span>{address}</span>
               <FontAwesomeIcon
                 icon={['fas', 'right-from-bracket']}
@@ -44,7 +52,7 @@ const Home = ({ onPopup, myPlayers, address, onConnect, onExit }) => {
             <div className="cards_list_inner">
               {myPlayers && myPlayers.map((player) => (player.name.toLowerCase().indexOf(filter.toLocaleLowerCase()) !== -1 && (
                 <div className="card" key={player.id}>
-                  <img src={player.src} />
+                  <img src={player.src} alt="" />
                   <div className="card_content">
                     <div className="card_number">{`NO. ${player.id}`}</div>
                     <div className="card_title">
