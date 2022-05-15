@@ -3,8 +3,8 @@ import {
 	Route, Routes, Link, useLocation,
 } from 'react-router-dom';
 import {
-  connectWallet,
-  createMap,
+  walletConnect,
+  getMints,
 } from './Functions/api';
 
 import Home from './Containers/Home.jsx';
@@ -18,13 +18,11 @@ import {
     faSpinner,
     faLink,
     faRightFromBracket,
+    faCheck,
 } from '@fortawesome/free-solid-svg-icons';
 import {
     faHeart,
 } from '@fortawesome/free-regular-svg-icons';
-// import {
-//     faTelegram,
-// } from '@fortawesome/free-brands-svg-icons';
 import './App.css';
 
 library.add(
@@ -33,12 +31,15 @@ library.add(
   faSpinner,
   faRightFromBracket,
   faLink,
+  faCheck,
 );
 
 const App = () => {
   const location = useLocation();
 
-  const [address, setAddress] = useState(null);
+  const [account, setAccount] = useState(null);
+  const [walletData, setWalletData] = useState();
+  const [tokens, setTokens] = useState();
   const [myPlayers, setMyPlayers] = useState([]);
   const [players, setPlayers] = useState([{
     id: '0001',
@@ -115,31 +116,39 @@ const App = () => {
   }]);
   const [popup, setPopup] = useState({ current: null, item: null });
 
+  useEffect(() => {
+    setTokens({
+      balls: 0.02,
+      goals: 0.0124
+    });
+
+    if (!account && document.location.pathname !== '/') {
+      // document.location.href = '/';
+    }
+  }, []);
+
   const onPopup = (current = null, item = null) => {
 		setPopup({ current, item });
 	};
 
-  const onConnect = () => {
-    setAddress('000000000000000000000000000000000211cf42');
-    // connectWallet().then((address) => {
-    //   setAddress(address['_address']);
-    // });
+  const onConnect = async () => {
+    const walletDataTemp = await walletConnect();
+    walletDataTemp[0].pairingEvent.once((pairingData) => {
+      pairingData.accountIds.forEach((accountTemp) => {
+        setAccount(accountTemp);
+        getMints().then((amountTemp) => {
+          const amount = Number(amountTemp.toString().replace(/,/g, ''));
+          const myPlayersTemp = players.slice(0, amount);
+          setMyPlayers(myPlayersTemp);
+        });
+      });
+    });
+    setWalletData(walletDataTemp);
 	};
-
-  // const onClaim = (playerId) => {
-  //   console.log(playerId)
-  //   onPopup('loading');
-	// 	claimResources(playerId, address).then((e) => {
-  //     setTimeout(() => {
-  //       const hash = e.inMessage.hash;
-  //       onPopup('success', hash);
-  //     }, 1000);
-  //   });
-	// };
 
   const onExit = () => {
     setMyPlayers([]);
-    setAddress(null);
+    setAccount(null);
     document.location.href = '/';
 	};
 
@@ -153,13 +162,14 @@ const App = () => {
             onClick={() => onPopup()}
           />
           <div className="popup_content">
-            <div className="popup_title">Успешно</div>
+            <div className="popup_icon">
+              <FontAwesomeIcon
+                icon={['fas', 'check']}
+              />
+            </div>
             {popup.item && (
               <div className="popup_subtitle popup_wrap">{popup.item}</div>
             )}
-            <div className="popup_icon">
-              <FontAwesomeIcon icon={['far', 'circle-check']} />
-            </div>
           </div>
         </div>
       )}
@@ -175,9 +185,9 @@ const App = () => {
           <Link
             to="/battles"
             className={location.pathname === '/battles' ? "sidebar_item active" : "sidebar_item"}
-            style={!address ? { color: '#c4c4c4' } : {}}
+            style={!account ? { color: '#c4c4c4' } : {}}
             onClick={(e)=> {
-              if (!address) {
+              if (!account) {
                 onPopup('auth');
                 e.preventDefault();
               }
@@ -189,9 +199,9 @@ const App = () => {
           <Link
             to="/marketplace"
             className={location.pathname === '/marketplace' ? "sidebar_item active" : "sidebar_item"}
-            style={!address ? { color: '#c4c4c4' } : {}}
+            style={!account ? { color: '#c4c4c4' } : {}}
             onClick={(e)=> {
-              if (!address) {
+              if (!account) {
                 onPopup('auth');
                 e.preventDefault();
               }
@@ -212,9 +222,11 @@ const App = () => {
             exact
             element={<Home
               onPopup={onPopup}
-              address={address}
+              account={account}
               onExit={onExit}
               onConnect={onConnect}
+              tokens={tokens}
+              walletData={walletData}
               myPlayers={myPlayers}
             />}
           />
@@ -223,7 +235,10 @@ const App = () => {
             exact
             element={<Battles
               onPopup={onPopup}
-              address={address}
+              account={account}
+              myPlayers={myPlayers}
+              tokens={tokens}
+              walletData={walletData}
               onExit={onExit}
             />}
           />
@@ -232,9 +247,12 @@ const App = () => {
             exact
             element={<Marketplace
               onPopup={onPopup}
-              address={address}
+              account={account}
               onExit={onExit}
               players={players}
+              tokens={tokens}
+              walletData={walletData}
+              setMyPlayers={setMyPlayers}
               myPlayers={myPlayers}
             />}
           />
