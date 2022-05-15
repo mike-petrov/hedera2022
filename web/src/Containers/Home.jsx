@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const Home = ({ onPopup, myPlayers, address, tokens, onConnect, onExit }) => {
+const Home = ({ onPopup, myPlayers, account, tokens, onConnect, onExit }) => {
   const [filter, setFilter] = useState('');
 
   const onFilter = (e) => {
@@ -14,7 +14,7 @@ const Home = ({ onPopup, myPlayers, address, tokens, onConnect, onExit }) => {
       <div className="header">
         <div className="title">Academy</div>
         <div className="subtitle">Your own football team</div>
-        {address && (
+        {account && (
             <div className="header_block">
               <span style={{ background: '#3e4de5', display: 'flex', alignItems: 'center' }}>
                 <img src="./img/ball.png" alt="" />
@@ -24,7 +24,7 @@ const Home = ({ onPopup, myPlayers, address, tokens, onConnect, onExit }) => {
                 <img src="./img/goal.png" alt="" />
                 <span>{tokens.goals}</span>
               </span>
-              <span>{address}</span>
+              <span>{account}</span>
               <FontAwesomeIcon
                 icon={['fas', 'right-from-bracket']}
                 style={{ cursor: 'pointer' }}
@@ -33,7 +33,7 @@ const Home = ({ onPopup, myPlayers, address, tokens, onConnect, onExit }) => {
             </div>
           )}
       </div>
-      {address ? (
+      {account ? (
         <>
           <div className="cards_filter">
             <div className="card_title">

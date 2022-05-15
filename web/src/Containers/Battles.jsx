@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const Battles = ({ address, myPlayers, tokens, onExit }) => {
+const Battles = ({ account, myPlayers, tokens, onExit }) => {
   const [gamePlayers, setGamePlayers] = useState([]);
   const [start, setStart] = useState(false);
 
@@ -36,7 +36,7 @@ const Battles = ({ address, myPlayers, tokens, onExit }) => {
       <div className="header">
         <div className="title">Matches</div>
         <div className="subtitle">Each player has his own position on the field, keep balance and win the game</div>
-        {address && (
+        {account && (
             <div className="header_block">
               <span style={{ background: '#3e4de5', display: 'flex', alignItems: 'center' }}>
                 <img src="./img/ball.png" alt="" />
@@ -46,7 +46,7 @@ const Battles = ({ address, myPlayers, tokens, onExit }) => {
                 <img src="./img/goal.png" alt="" />
                 <span>{tokens.goals}</span>
               </span>
-              <span>{address}</span>
+              <span>{account}</span>
               <FontAwesomeIcon
                 icon={['fas', 'right-from-bracket']}
                 style={{ cursor: 'pointer' }}
