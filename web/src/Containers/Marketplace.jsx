@@ -1,15 +1,23 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  getMintAmount,
+} from '../Functions/api';
 
-const Marketplace = ({ players, address, tokens, onExit }) => {
+const Marketplace = ({ onPopup, walletData, players, account, tokens, onExit, myPlayers, setMyPlayers }) => {
   const [filter, setFilter] = useState('');
 
   const onFilter = (e) => {
 		setFilter(e.target.value);
 	};
 
-  const onBuy = (e) => {
-		// setFilter(e.target.value);
+  const onBuy = (amount) => {
+    getMintAmount(walletData, account, amount).then((tx) => {
+      onPopup('success', 'Your team has been replenished with new players');
+      const count = myPlayers.length + amount;
+      const myPlayersTemp = players.slice(0, count);
+      setMyPlayers(myPlayersTemp);
+    });
 	};
 
   return (
@@ -17,7 +25,7 @@ const Marketplace = ({ players, address, tokens, onExit }) => {
       <div className="header">
         <div className="title">Marketplace</div>
         <div className="subtitle">Limited NFT Collection</div>
-        {address && (
+        {account && (
             <div className="header_block">
               <span style={{ background: '#3e4de5', display: 'flex', alignItems: 'center' }}>
                 <img src="./img/ball.png" alt="" />
@@ -27,7 +35,7 @@ const Marketplace = ({ players, address, tokens, onExit }) => {
                 <img src="./img/goal.png" alt="" />
                 <span>{tokens.goals}</span>
               </span>
-              <span>{address}</span>
+              <span>{account}</span>
               <FontAwesomeIcon
                 icon={['fas', 'right-from-bracket']}
                 style={{ cursor: 'pointer' }}
@@ -51,6 +59,33 @@ const Marketplace = ({ players, address, tokens, onExit }) => {
       </div>
       <div className="cards_list">
         <div className="cards_list_inner">
+          {[
+            { name: 'Gift Box #1', count: 1 },
+            { name: 'Gift Box #2', count: 3 },
+            { name: 'Gift Box #3', count: 5 },
+            { name: 'Gift Box #4', count: 10 },
+          ].map((gift, index) => (
+            <div className="card" key={gift.count}>
+              <img src={`./img/players/gift${index + 1}.png`} alt="" />
+              <div className="card_content">
+                <div className="card_number">{`NO. ${index + 1}`}</div>
+                <div className="card_title">
+                  <span>Name</span>
+                  {` ${gift.name}`}
+                </div>
+                <div className="card_title">
+                  <span>Price</span>
+                  {` ${gift.count * 100000} tℏ`}
+                </div>
+                <div
+                  className="btn"
+                  style={{ margin: '20px 0 0 0' }}
+                  onClick={() => onBuy(gift.count)}
+                >Buy</div>
+              </div>
+            </div>
+          ))}
+          <div className="p2p_subtitle" id="scroll_anchor">You can get</div>
           {players && players.map((player) => (player.name.toLowerCase().indexOf(filter.toLocaleLowerCase()) !== -1 && (
             <div className="card" key={player.id}>
               <img src={player.src} alt="" />
@@ -68,11 +103,6 @@ const Marketplace = ({ players, address, tokens, onExit }) => {
                   <span>Rating</span>
                   {` ${player.rating}`}
                 </div>
-                <div
-                  className="btn"
-                  style={{ margin: '20px 0 0 0' }}
-                  onClick={onBuy}
-                >Buy</div>
               </div>
             </div>
           )))}
