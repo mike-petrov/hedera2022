@@ -1,12 +1,43 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  stakePlayer,
+  unstakePlayer,
+} from '../Functions/api';
 
-const Home = ({ onPopup, myPlayers, account, tokens, onConnect, onExit }) => {
+const Home = ({
+  onPopup,
+  myPlayers,
+  claimedBalls,
+  onGetClaimedBalles,
+  setMyPlayers,
+  account,
+  tokens,
+  onConnect,
+  walletData,
+  onExit
+}) => {
   const [filter, setFilter] = useState('');
 
   const onFilter = (e) => {
 		setFilter(e.target.value);
+	};
+
+  const onStake = (id) => {
+		stakePlayer(walletData, account, id).then(() => {
+      myPlayers[id].isStake = true;
+      setMyPlayers(myPlayers);
+      onPopup('success', 'This player is staking');
+    });
+	};
+
+  const onUnstake = (id) => {
+		unstakePlayer(walletData, account, id).then(() => {
+      myPlayers[id].isStake = false;
+      setMyPlayers(myPlayers);
+      onPopup('success', 'This player was unstaked');
+    });
 	};
 
   return (
@@ -48,9 +79,30 @@ const Home = ({ onPopup, myPlayers, account, tokens, onConnect, onExit }) => {
               style={{ width: 'calc(50% - 40px)' }}
             />
           </div>
+          <div className="banner">
+            <div className="banner_title">{`You stake ${myPlayers.map((item) => item.isStake).length} players`}</div>
+            {(myPlayers.map((item) => item.isStake).length !== 0 || claimedBalls !== 0) && (
+              <>
+                <div className="banner_subtitle">
+                  {`Claimed Balls: ${claimedBalls}`}
+                  <FontAwesomeIcon
+                    icon={['fas', 'rotate']}
+                    style={{ cursor: 'pointer', marginLeft: 10 }}
+                    onClick={() => onGetClaimedBalles()}
+                  />
+                </div>
+                {claimedBalls !== 0 && (
+                  <div
+                    className="btn"
+                    onClick={onConnect}
+                  >Claim</div>
+                )}
+              </>
+            )}
+          </div>
           <div className="cards_list">
             <div className="cards_list_inner">
-              {myPlayers && myPlayers.map((player) => (player.name.toLowerCase().indexOf(filter.toLocaleLowerCase()) !== -1 && (
+              {myPlayers && myPlayers.map((player, index) => (player.name.toLowerCase().indexOf(filter.toLocaleLowerCase()) !== -1 && (
                 <div className="card" key={player.id}>
                   <img src={player.src} alt="" />
                   <div className="card_content">
@@ -67,6 +119,19 @@ const Home = ({ onPopup, myPlayers, account, tokens, onConnect, onExit }) => {
                       <span>Rating</span>
                       {` ${player.rating}`}
                     </div>
+                    {player.isStake ? (
+                      <div
+                        className="btn"
+                        style={{ margin: '20px 0 0 0' }}
+                        onClick={() => onUnstake(index)}
+                      >Unstake</div>
+                    ) : (
+                      <div
+                        className="btn"
+                        style={{ margin: '20px 0 0 0' }}
+                        onClick={() => onStake(index)}
+                      >Stake</div>
+                    )}
                   </div>
                 </div>
               )))}
