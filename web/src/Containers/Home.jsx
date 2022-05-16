@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   stakePlayer,
   unstakePlayer,
+  upgradePlayer,
 } from '../Functions/api';
 
 const Home = ({
@@ -38,6 +39,16 @@ const Home = ({
       setMyPlayers(myPlayers);
       onPopup('success', 'This player was unstaked');
     });
+	};
+
+  const onUpgrade = (id) => {
+    if (tokens.goals > 0) {
+      upgradePlayer(walletData, account, id).then(() => {
+        onPopup('success', 'This player was upgraded');
+      });
+    } else {
+      onPopup('error', 'Not enough Goals');
+    }
 	};
 
   return (
@@ -79,9 +90,10 @@ const Home = ({
               style={{ width: 'calc(50% - 40px)' }}
             />
           </div>
+          <div className="cards_list">
           <div className="banner">
-            <div className="banner_title">{`You stake ${myPlayers.map((item) => item.isStake).length} players`}</div>
-            {(myPlayers.map((item) => item.isStake).length !== 0 || claimedBalls !== 0) && (
+            <div className="banner_title">{`You stake ${myPlayers.filter((item) => item.isStake).length} players`}</div>
+            {(myPlayers.filter((item) => item.isStake).length !== 0 || claimedBalls !== 0) && (
               <>
                 <div className="banner_subtitle">
                   {`Claimed Balls: ${claimedBalls}`}
@@ -100,7 +112,6 @@ const Home = ({
               </>
             )}
           </div>
-          <div className="cards_list">
             <div className="cards_list_inner">
               {myPlayers && myPlayers.map((player, index) => (player.name.toLowerCase().indexOf(filter.toLocaleLowerCase()) !== -1 && (
                 <div className="card" key={player.id}>
@@ -132,6 +143,11 @@ const Home = ({
                         onClick={() => onStake(index)}
                       >Stake</div>
                     )}
+                    <div
+                      className="btn"
+                      style={{ margin: '10px 0 0 0' }}
+                      onClick={() => onUpgrade(index)}
+                    >Upgrade</div>
                   </div>
                 </div>
               )))}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const Battles = ({ account, myPlayers, tokens, onExit }) => {
+const Battles = ({ account, myPlayers, tokens, setTokens, onExit }) => {
   const [gamePlayers, setGamePlayers] = useState([]);
   const [start, setStart] = useState(false);
 
@@ -25,6 +25,7 @@ const Battles = ({ account, myPlayers, tokens, onExit }) => {
 
   const onStart = () => {
     setStart(true);
+    setTokens({...tokens, balls: tokens.balls + 0.135 });
 	};
 
   const onReStart = () => {
@@ -105,7 +106,7 @@ const Battles = ({ account, myPlayers, tokens, onExit }) => {
                 <div className="p2p_rewards">
                   <div>
                     <img src="./img/goal.png" alt="" />
-                    <span>{`+ ${tokens && tokens.goals}`}</span>
+                    <span>{`+ 0.135`}</span>
                   </div>
                 </div>
                 <div

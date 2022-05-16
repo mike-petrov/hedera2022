@@ -123,8 +123,8 @@ const App = () => {
 
   useEffect(() => {
     setTokens({
-      balls: 0.02,
-      goals: 0.0124
+      balls: 0,
+      goals: 0
     });
 
     if (!account && document.location.pathname !== '/') {
@@ -142,13 +142,11 @@ const App = () => {
       pairingData.accountIds.forEach((accountTemp) => {
         setAccount(accountTemp);
         getMints().then((amountTemp) => {
-          // onGetClaimedBalles(walletDataTemp, accountTemp);
           getStakedPlayers().then((stakedPlayersTemp) => {
-            const amount = Number(amountTemp.toString().replace(/,/g, ''));
-            const myPlayersTemp = players.slice(0, amount);
+            const myPlayersTemp = players.slice(0, amountTemp);
             for (let i = 0; i < myPlayersTemp.length; i += 1) {
               myPlayersTemp[i].isStake = false;
-              if (myPlayersTemp[i] === stakedPlayersTemp) {
+              if (i === stakedPlayersTemp) {
                 myPlayersTemp[i].isStake = true;
               }
             }
@@ -187,6 +185,20 @@ const App = () => {
                 icon={['fas', 'check']}
               />
             </div>
+            {popup.item && (
+              <div className="popup_subtitle popup_wrap">{popup.item}</div>
+            )}
+          </div>
+        </div>
+      )}
+      {popup.current === 'error' && (
+        <div className="popup">
+          <div
+            className="popup_close_panel"
+            onClick={() => onPopup()}
+          />
+          <div className="popup_content">
+            <div className="popup_title">Error</div>
             {popup.item && (
               <div className="popup_subtitle popup_wrap">{popup.item}</div>
             )}
@@ -248,6 +260,7 @@ const App = () => {
               claimedBalls={claimedBalls}
               onConnect={onConnect}
               tokens={tokens}
+              setTokens={setTokens}
               walletData={walletData}
               myPlayers={myPlayers}
               setMyPlayers={setMyPlayers}
@@ -261,6 +274,7 @@ const App = () => {
               account={account}
               myPlayers={myPlayers}
               tokens={tokens}
+              setTokens={setTokens}
               walletData={walletData}
               onExit={onExit}
             />}

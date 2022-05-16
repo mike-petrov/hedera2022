@@ -142,6 +142,28 @@ export async function unstakePlayer(walletData, accountId, playerId) {
   return txResponse;
 }
 
+export async function upgradePlayer(walletData, accountId, playerId) {
+	const hashconnect = walletData[0];
+	const saveData = walletData[1];
+	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
+	const signer = hashconnect.getSigner(provider);
+
+  const contractId = '0.0.34817836';
+
+  const upgradePlayer = await new ContractExecuteTransaction()
+      .setContractId(contractId)
+      .setGas(1000000)
+      .setFunction(
+          "upgradePlayer",
+          new ContractFunctionParameters()
+          .addUint256Array([numberToUint256(playerId)])
+      )
+      .freezeWithSigner(signer);
+
+  const txResponse = await upgradePlayer.executeWithSigner(signer);
+  return txResponse;
+}
+
 export async function getClaimableView(walletData, accountId) {
 	const hashconnect = walletData[0];
 	const saveData = walletData[1];
@@ -199,5 +221,33 @@ export async function getStakedPlayers() {
 
   const contractUpdateResult = await contractCallQuery.execute(client);
   const amount = contractUpdateResult.bytes;
+  console.log(amount, Uint8ArrToNumber(amount));
   return amount;
 }
+
+// export async function getMints2(walletData, accountId) {
+//   const contractId = '0.0.34817440';
+
+//   // totalSupply
+//   const totalSupply = await new ContractExecuteTransaction()
+//       .setContractId(contractId)
+//       .setGas(1000000)
+//       .setFunction("totalSupply")
+//       .freezeWithSigner(signer)
+
+//   let txResponse = await totalSupply.executeWithSigner(signer);
+//   // const receipt = await txResponse.getReceipt(signer);
+//   // const record = await txResponse.getRecord(signer);
+//   console.log('!', txResponse);
+
+// 	const sec = txResponse.transactionId.validStart.seconds.low;
+// 	const nano = txResponse.transactionId.validStart.nanos.low;
+// 	const txId = `${accountId}@${sec}.${nano}`;
+// 	const tokenCreateRx = await provider.getTransactionReceipt(txId);
+//   console.log('!', tokenCreateRx);
+//   return 1;
+// }
+
+// .setFunction("mint", new ContractFunctionParameters().addUint256(1))
+// .addAddress('0x' + AccountId.fromString(myId).toSolidityAddress())
+// https://testnet.mirrornode.hedera.com/api/v1/contracts/0.0.34817399/results
