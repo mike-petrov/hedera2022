@@ -44,7 +44,7 @@ const App = () => {
   const [players, setPlayers] = useState([{
     id: '0001',
     name: 'Timothy Daniels',
-    position: 'CB',
+    position: 'DM',
     rating: 88,
     src: './img/players/1.png',
   }, {
@@ -86,7 +86,7 @@ const App = () => {
   }, {
     id: '0008',
     name: 'Jeffrey Lamb',
-    position: 'CM',
+    position: 'RB',
     rating: 82,
     src: './img/players/8.png',
   }, {
@@ -98,19 +98,19 @@ const App = () => {
   }, {
     id: '0010',
     name: 'Steven White',
-    position: 'RB',
+    position: 'LM',
     rating: 38,
     src: './img/players/10.png',
   }, {
     id: '0011',
     name: 'Stanley Horton',
-    position: 'DM',
+    position: 'RM',
     rating: 20,
     src: './img/players/11.png',
   }, {
     id: '0012',
     name: 'Dale Vega',
-    position: 'CM',
+    position: 'CF',
     rating: 16,
     src: './img/players/12.png',
   }]);
