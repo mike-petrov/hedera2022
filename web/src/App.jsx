@@ -5,6 +5,8 @@ import {
 import {
   walletConnect,
   getMints,
+  getStakedPlayers,
+  getClaimableView,
 } from './Functions/api';
 
 import Home from './Containers/Home.jsx';
@@ -19,6 +21,7 @@ import {
     faLink,
     faRightFromBracket,
     faCheck,
+    faRotate,
 } from '@fortawesome/free-solid-svg-icons';
 import {
     faHeart,
@@ -32,6 +35,7 @@ library.add(
   faRightFromBracket,
   faLink,
   faCheck,
+  faRotate,
 );
 
 const App = () => {
@@ -39,6 +43,7 @@ const App = () => {
 
   const [account, setAccount] = useState(null);
   const [walletData, setWalletData] = useState();
+  const [claimedBalls, setClaimedBalls] = useState(0);
   const [tokens, setTokens] = useState();
   const [myPlayers, setMyPlayers] = useState([]);
   const [players, setPlayers] = useState([{
@@ -137,9 +142,18 @@ const App = () => {
       pairingData.accountIds.forEach((accountTemp) => {
         setAccount(accountTemp);
         getMints().then((amountTemp) => {
-          const amount = Number(amountTemp.toString().replace(/,/g, ''));
-          const myPlayersTemp = players.slice(0, amount);
-          setMyPlayers(myPlayersTemp);
+          // onGetClaimedBalles(walletDataTemp, accountTemp);
+          getStakedPlayers().then((stakedPlayersTemp) => {
+            const amount = Number(amountTemp.toString().replace(/,/g, ''));
+            const myPlayersTemp = players.slice(0, amount);
+            for (let i = 0; i < myPlayersTemp.length; i += 1) {
+              myPlayersTemp[i].isStake = false;
+              if (myPlayersTemp[i] === stakedPlayersTemp) {
+                myPlayersTemp[i].isStake = true;
+              }
+            }
+            setMyPlayers(myPlayersTemp);
+          });
         });
       });
     });
@@ -150,6 +164,12 @@ const App = () => {
     setMyPlayers([]);
     setAccount(null);
     document.location.href = '/';
+	};
+
+  const onGetClaimedBalles = (walletDataTemp = walletData, accountTemp = account) => {
+    getClaimableView(walletDataTemp, accountTemp).then((claimedBallsTemp) => {
+      setClaimedBalls(claimedBallsTemp);
+    });
 	};
 
   return (
@@ -224,10 +244,13 @@ const App = () => {
               onPopup={onPopup}
               account={account}
               onExit={onExit}
+              onGetClaimedBalles={onGetClaimedBalles}
+              claimedBalls={claimedBalls}
               onConnect={onConnect}
               tokens={tokens}
               walletData={walletData}
               myPlayers={myPlayers}
+              setMyPlayers={setMyPlayers}
             />}
           />
           <Route
