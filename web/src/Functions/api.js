@@ -19,8 +19,8 @@ const operatorId = AccountId.fromString(process.env.REACT_APP_ACCOUNT_ID);
 const operatorKey = PrivateKey.fromStringED25519(process.env.REACT_APP_PRIVATE_KEY);
 const client = Client.forTestnet().setOperator(operatorId, operatorKey);
 
-const contractPlayersId = '0.0.34817440';
-const contractGoalId = '0.0.34817836';
+const contractPlayersId = '0.0.34826266';
+const contractGoalId = '0.0.34826270';
 
 function numberToUint256(value) {
   const hex = value.toString(16);
