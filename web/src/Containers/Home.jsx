@@ -74,7 +74,6 @@ const Home = ({
 
   return (
     <div className="container">
-      {console.log(myPlayers)}
       <div className="header">
         <div className="title">Academy</div>
         <div className="subtitle">Your own football team</div>

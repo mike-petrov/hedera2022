@@ -19,6 +19,9 @@ const operatorId = AccountId.fromString(process.env.REACT_APP_ACCOUNT_ID);
 const operatorKey = PrivateKey.fromStringED25519(process.env.REACT_APP_PRIVATE_KEY);
 const client = Client.forTestnet().setOperator(operatorId, operatorKey);
 
+const contractPlayersId = '0.0.34817440';
+const contractGoalId = '0.0.34817836';
+
 function numberToUint256(value) {
   const hex = value.toString(16);
   return `0x${"0".repeat(64 - hex.length)}${hex}`;
@@ -65,10 +68,8 @@ export async function walletConnect() {
 }
 
 export async function balanceOf(accountId) {
-  const contractId = '0.0.34817440';
-
   const balanceOf = new ContractCallQuery()
-    .setContractId(contractId)
+    .setContractId(contractPlayersId)
     .setGas(100000)
     .setFunction(
       "balanceOf",
@@ -82,10 +83,8 @@ export async function balanceOf(accountId) {
 }
 
 export async function tokenOfOwnerByIndex(accountId, playerId) {
-  const contractId = '0.0.34817440';
-
   const tokenOfOwnerByIndex = new ContractCallQuery()
-    .setContractId(contractId)
+    .setContractId(contractPlayersId)
     .setGas(100000)
     .setFunction(
       "tokenOfOwnerByIndex",
@@ -100,10 +99,8 @@ export async function tokenOfOwnerByIndex(accountId, playerId) {
 }
 
 export async function getMints() {
-  const contractId = '0.0.34817440';
-
   const getMints = new ContractCallQuery()
-    .setContractId(contractId)
+    .setContractId(contractPlayersId)
     .setGas(100000)
     .setFunction("totalSupply");
 
@@ -118,10 +115,8 @@ export async function getMintAmount(walletData, accountId, amount) {
   const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
   const signer = hashconnect.getSigner(provider);
 
-  const contractId = '0.0.34817440';
-
   const getMintAmount = await new ContractExecuteTransaction()
-    .setContractId(contractId)
+    .setContractId(contractPlayersId)
     .setGas(1000000)
     .setFunction(
       "mint",
@@ -141,10 +136,8 @@ export async function stakePlayer(walletData, accountId, playerId) {
   const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
   const signer = hashconnect.getSigner(provider);
 
-  const contractId = '0.0.34817836';
-
   const stakePlayer = await new ContractExecuteTransaction()
-    .setContractId(contractId)
+    .setContractId(contractGoalId)
     .setGas(1000000)
     .setFunction(
       "stake",
@@ -163,10 +156,8 @@ export async function unstakePlayer(walletData, accountId, playerId) {
   const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
   const signer = hashconnect.getSigner(provider);
 
-  const contractId = '0.0.34817836';
-
   const unstakePlayer = await new ContractExecuteTransaction()
-    .setContractId(contractId)
+    .setContractId(contractGoalId)
     .setGas(1000000)
     .setFunction(
       "unstake",
@@ -185,10 +176,8 @@ export async function upgradePlayer(walletData, accountId, playerId) {
   const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
   const signer = hashconnect.getSigner(provider);
 
-  const contractId = '0.0.34817836';
-
   const upgradePlayer = await new ContractExecuteTransaction()
-    .setContractId(contractId)
+    .setContractId(contractGoalId)
     .setGas(1000000)
     .setFunction(
       "upgradePlayer",
@@ -207,10 +196,8 @@ export async function getClaimableView(walletData, accountId) {
   const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
   const signer = hashconnect.getSigner(provider);
 
-  const contractId = '0.0.34817836';
-
   const getClaimableView = await new ContractExecuteTransaction()
-    .setContractId(contractId)
+    .setContractId(contractGoalId)
     .setGas(1000000)
     .setFunction("myClaimableView")
     .freezeWithSigner(signer);
@@ -235,10 +222,8 @@ export async function claimBalls(walletData, accountId) {
   const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
   const signer = hashconnect.getSigner(provider);
 
-  const contractId = '0.0.34817836';
-
   const claimBalls = await new ContractExecuteTransaction()
-    .setContractId(contractId)
+    .setContractId(contractGoalId)
     .setGas(1000000)
     .setFunction("claimBalls")
     .freezeWithSigner(signer);
@@ -248,10 +233,8 @@ export async function claimBalls(walletData, accountId) {
 }
 
 export async function getStakedPlayers() {
-  const contractId = '0.0.34817836';
-
   const contractCallQuery = new ContractCallQuery()
-    .setContractId(contractId)
+    .setContractId(contractGoalId)
     .setGas(1000000)
     .setFunction("myStakedPlayers")
     .setQueryPayment(new Hbar(0.000001));
@@ -260,30 +243,3 @@ export async function getStakedPlayers() {
   const amount = contractUpdateResult.bytes;
   return amount;
 }
-
-// export async function getMints2(walletData, accountId) {
-//   const contractId = '0.0.34817440';
-
-//   // totalSupply
-//   const totalSupply = await new ContractExecuteTransaction()
-//       .setContractId(contractId)
-//       .setGas(1000000)
-//       .setFunction("totalSupply")
-//       .freezeWithSigner(signer)
-
-//   let txResponse = await totalSupply.executeWithSigner(signer);
-//   // const receipt = await txResponse.getReceipt(signer);
-//   // const record = await txResponse.getRecord(signer);
-//   console.log('!', txResponse);
-
-// 	const sec = txResponse.transactionId.validStart.seconds.low;
-// 	const nano = txResponse.transactionId.validStart.nanos.low;
-// 	const txId = `${accountId}@${sec}.${nano}`;
-// 	const tokenCreateRx = await provider.getTransactionReceipt(txId);
-//   console.log('!', tokenCreateRx);
-//   return 1;
-// }
-
-// .setFunction("mint", new ContractFunctionParameters().addUint256(1))
-// .addAddress('0x' + AccountId.fromString(myId).toSolidityAddress())
-// https://testnet.mirrornode.hedera.com/api/v1/contracts/0.0.34817399/results
