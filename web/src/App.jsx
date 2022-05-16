@@ -4,9 +4,10 @@ import {
 } from 'react-router-dom';
 import {
   walletConnect,
-  getMints,
   getStakedPlayers,
+  balanceOf,
   getClaimableView,
+  tokenOfOwnerByIndex,
 } from './Functions/api';
 
 import Home from './Containers/Home.jsx';
@@ -141,16 +142,19 @@ const App = () => {
     walletDataTemp[0].pairingEvent.once((pairingData) => {
       pairingData.accountIds.forEach((accountTemp) => {
         setAccount(accountTemp);
-        getMints().then((amountTemp) => {
+        balanceOf(accountTemp).then((countPlayers) => {
+          for (let i = 0; i < countPlayers; i += 1) {
+            tokenOfOwnerByIndex(accountTemp, i).then((id) => {
+              setMyPlayers((myPlayersTemp) => [ ...myPlayersTemp, { ...players[id], isStake: false }]);
+            });
+          }
           getStakedPlayers().then((stakedPlayersTemp) => {
-            const myPlayersTemp = players.slice(0, amountTemp);
-            for (let i = 0; i < myPlayersTemp.length; i += 1) {
-              myPlayersTemp[i].isStake = false;
+            for (let i = 0; i < myPlayers.length; i += 1) {
+              myPlayers[i].isStake = false;
               if (i === stakedPlayersTemp) {
-                myPlayersTemp[i].isStake = true;
+                myPlayers[i].isStake = true;
               }
             }
-            setMyPlayers(myPlayersTemp);
           });
         });
       });
@@ -261,6 +265,7 @@ const App = () => {
               onConnect={onConnect}
               tokens={tokens}
               setTokens={setTokens}
+              setClaimedBalls={setClaimedBalls}
               walletData={walletData}
               myPlayers={myPlayers}
               setMyPlayers={setMyPlayers}

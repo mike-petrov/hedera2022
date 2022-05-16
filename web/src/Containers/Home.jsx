@@ -5,6 +5,7 @@ import {
   stakePlayer,
   unstakePlayer,
   upgradePlayer,
+  claimBalls,
 } from '../Functions/api';
 
 const Home = ({
@@ -17,7 +18,9 @@ const Home = ({
   tokens,
   onConnect,
   walletData,
-  onExit
+  onExit,
+  setTokens,
+  setClaimedBalls,
 }) => {
   const [filter, setFilter] = useState('');
 
@@ -26,16 +29,26 @@ const Home = ({
 	};
 
   const onStake = (id) => {
-		stakePlayer(walletData, account, id).then(() => {
-      myPlayers[id].isStake = true;
+		stakePlayer(walletData, account, Number(id)).then(() => {
+      for (let i = 0; i < myPlayers.length; i += 1) {
+        if (myPlayers[i].id === id) {
+          myPlayers[i].isStake = true;
+          break;
+        }
+      }
       setMyPlayers(myPlayers);
       onPopup('success', 'This player is staking');
     });
 	};
 
   const onUnstake = (id) => {
-		unstakePlayer(walletData, account, id).then(() => {
-      myPlayers[id].isStake = false;
+		unstakePlayer(walletData, account, Number(id)).then(() => {
+      for (let i = 0; i < myPlayers.length; i += 1) {
+        if (myPlayers[i].id === id) {
+          myPlayers[i].isStake = false;
+          break;
+        }
+      }
       setMyPlayers(myPlayers);
       onPopup('success', 'This player was unstaked');
     });
@@ -43,7 +56,7 @@ const Home = ({
 
   const onUpgrade = (id) => {
     if (tokens.goals > 0) {
-      upgradePlayer(walletData, account, id).then(() => {
+      upgradePlayer(walletData, account, Number(id)).then(() => {
         onPopup('success', 'This player was upgraded');
       });
     } else {
@@ -51,8 +64,17 @@ const Home = ({
     }
 	};
 
+  const onClaim = () => {
+    claimBalls(walletData, account).then(() => {
+      onPopup('success', 'Claimed success');
+      setTokens({...tokens, balls: tokens.balls + claimedBalls });
+      setClaimedBalls(0);
+    });
+	};
+
   return (
     <div className="container">
+      {console.log(myPlayers)}
       <div className="header">
         <div className="title">Academy</div>
         <div className="subtitle">Your own football team</div>
@@ -106,7 +128,7 @@ const Home = ({
                 {claimedBalls !== 0 && (
                   <div
                     className="btn"
-                    onClick={onConnect}
+                    onClick={onClaim}
                   >Claim</div>
                 )}
               </>
@@ -134,19 +156,19 @@ const Home = ({
                       <div
                         className="btn"
                         style={{ margin: '20px 0 0 0' }}
-                        onClick={() => onUnstake(index)}
+                        onClick={() => onUnstake(player.id)}
                       >Unstake</div>
                     ) : (
                       <div
                         className="btn"
                         style={{ margin: '20px 0 0 0' }}
-                        onClick={() => onStake(index)}
+                        onClick={() => onStake(player.id)}
                       >Stake</div>
                     )}
                     <div
                       className="btn"
                       style={{ margin: '10px 0 0 0' }}
-                      onClick={() => onUpgrade(index)}
+                      onClick={() => onUpgrade(player.id)}
                     >Upgrade</div>
                   </div>
                 </div>

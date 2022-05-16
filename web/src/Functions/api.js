@@ -1,4 +1,6 @@
-import { HashConnect } from 'hashconnect';
+import {
+  HashConnect
+} from 'hashconnect';
 
 require("dotenv").config();
 
@@ -62,6 +64,41 @@ export async function walletConnect() {
   return [hashconnect, saveData];
 }
 
+export async function balanceOf(accountId) {
+  const contractId = '0.0.34817440';
+
+  const balanceOf = new ContractCallQuery()
+    .setContractId(contractId)
+    .setGas(100000)
+    .setFunction(
+      "balanceOf",
+      new ContractFunctionParameters()
+      .addAddress('0x' + AccountId.fromString(accountId).toSolidityAddress())
+    );
+
+  const contractUpdateResult = await balanceOf.execute(client);
+  const res = Uint8ArrToNumber(contractUpdateResult.bytes);
+  return res;
+}
+
+export async function tokenOfOwnerByIndex(accountId, playerId) {
+  const contractId = '0.0.34817440';
+
+  const tokenOfOwnerByIndex = new ContractCallQuery()
+    .setContractId(contractId)
+    .setGas(100000)
+    .setFunction(
+      "tokenOfOwnerByIndex",
+      new ContractFunctionParameters()
+      .addAddress('0x' + AccountId.fromString(accountId).toSolidityAddress())
+      .addUint256(playerId)
+    );
+
+  const contractUpdateResult = await tokenOfOwnerByIndex.execute(client);
+  const res = Uint8ArrToNumber(contractUpdateResult.bytes);
+  return res;
+}
+
 export async function getMints() {
   const contractId = '0.0.34817440';
 
@@ -76,135 +113,135 @@ export async function getMints() {
 }
 
 export async function getMintAmount(walletData, accountId, amount) {
-	const hashconnect = walletData[0];
-	const saveData = walletData[1];
-	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
-	const signer = hashconnect.getSigner(provider);
+  const hashconnect = walletData[0];
+  const saveData = walletData[1];
+  const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
+  const signer = hashconnect.getSigner(provider);
 
   const contractId = '0.0.34817440';
 
   const getMintAmount = await new ContractExecuteTransaction()
-      .setContractId(contractId)
-      .setGas(1000000)
-      .setFunction(
-          "mint",
-          new ContractFunctionParameters()
-          .addUint256(amount)
-      )
-      .setPayableAmount(new Hbar(0.001 * amount))
-      .freezeWithSigner(signer);
+    .setContractId(contractId)
+    .setGas(1000000)
+    .setFunction(
+      "mint",
+      new ContractFunctionParameters()
+      .addUint256(amount)
+    )
+    .setPayableAmount(new Hbar(0.001 * amount))
+    .freezeWithSigner(signer);
 
   const txResponse = await getMintAmount.executeWithSigner(signer);
   return txResponse;
 }
 
 export async function stakePlayer(walletData, accountId, playerId) {
-	const hashconnect = walletData[0];
-	const saveData = walletData[1];
-	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
-	const signer = hashconnect.getSigner(provider);
+  const hashconnect = walletData[0];
+  const saveData = walletData[1];
+  const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
+  const signer = hashconnect.getSigner(provider);
 
   const contractId = '0.0.34817836';
 
   const stakePlayer = await new ContractExecuteTransaction()
-      .setContractId(contractId)
-      .setGas(1000000)
-      .setFunction(
-          "stake",
-          new ContractFunctionParameters()
-          .addUint256Array([numberToUint256(playerId)])
-      )
-      .freezeWithSigner(signer);
+    .setContractId(contractId)
+    .setGas(1000000)
+    .setFunction(
+      "stake",
+      new ContractFunctionParameters()
+      .addUint256Array([numberToUint256(playerId)])
+    )
+    .freezeWithSigner(signer);
 
   const txResponse = await stakePlayer.executeWithSigner(signer);
   return txResponse;
 }
 
 export async function unstakePlayer(walletData, accountId, playerId) {
-	const hashconnect = walletData[0];
-	const saveData = walletData[1];
-	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
-	const signer = hashconnect.getSigner(provider);
+  const hashconnect = walletData[0];
+  const saveData = walletData[1];
+  const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
+  const signer = hashconnect.getSigner(provider);
 
   const contractId = '0.0.34817836';
 
   const unstakePlayer = await new ContractExecuteTransaction()
-      .setContractId(contractId)
-      .setGas(1000000)
-      .setFunction(
-          "unstake",
-          new ContractFunctionParameters()
-          .addUint256Array([numberToUint256(playerId)])
-      )
-      .freezeWithSigner(signer);
+    .setContractId(contractId)
+    .setGas(1000000)
+    .setFunction(
+      "unstake",
+      new ContractFunctionParameters()
+      .addUint256Array([numberToUint256(playerId)])
+    )
+    .freezeWithSigner(signer);
 
   const txResponse = await unstakePlayer.executeWithSigner(signer);
   return txResponse;
 }
 
 export async function upgradePlayer(walletData, accountId, playerId) {
-	const hashconnect = walletData[0];
-	const saveData = walletData[1];
-	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
-	const signer = hashconnect.getSigner(provider);
+  const hashconnect = walletData[0];
+  const saveData = walletData[1];
+  const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
+  const signer = hashconnect.getSigner(provider);
 
   const contractId = '0.0.34817836';
 
   const upgradePlayer = await new ContractExecuteTransaction()
-      .setContractId(contractId)
-      .setGas(1000000)
-      .setFunction(
-          "upgradePlayer",
-          new ContractFunctionParameters()
-          .addUint256Array([numberToUint256(playerId)])
-      )
-      .freezeWithSigner(signer);
+    .setContractId(contractId)
+    .setGas(1000000)
+    .setFunction(
+      "upgradePlayer",
+      new ContractFunctionParameters()
+      .addUint256Array([numberToUint256(playerId)])
+    )
+    .freezeWithSigner(signer);
 
   const txResponse = await upgradePlayer.executeWithSigner(signer);
   return txResponse;
 }
 
 export async function getClaimableView(walletData, accountId) {
-	const hashconnect = walletData[0];
-	const saveData = walletData[1];
-	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
-	const signer = hashconnect.getSigner(provider);
+  const hashconnect = walletData[0];
+  const saveData = walletData[1];
+  const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
+  const signer = hashconnect.getSigner(provider);
 
   const contractId = '0.0.34817836';
 
   const getClaimableView = await new ContractExecuteTransaction()
-      .setContractId(contractId)
-      .setGas(1000000)
-      .setFunction("myClaimableView")
-      .freezeWithSigner(signer);
+    .setContractId(contractId)
+    .setGas(1000000)
+    .setFunction("myClaimableView")
+    .freezeWithSigner(signer);
 
   const txResponse = await getClaimableView.executeWithSigner(signer);
 
-	const sec = txResponse.transactionId.validStart.seconds.low;
-	const nano = txResponse.transactionId.validStart.nanos.low;
-	const txId = `${accountId}@${sec}.${nano}`;
-  
+  const sec = txResponse.transactionId.validStart.seconds.low;
+  const nano = txResponse.transactionId.validStart.nanos.low;
+  const txId = `${accountId}@${sec}.${nano}`;
+
   const txRecord = await new TransactionRecordQuery()
     .setTransactionId(txId)
     .execute(client);
-  
+
   const amount = Uint8ArrToNumber(txRecord.contractFunctionResult.bytes);
   return amount;
 }
 
 export async function claimBalls(walletData, accountId) {
-	const hashconnect = walletData[0];
-	const saveData = walletData[1];
-	const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
-	const signer = hashconnect.getSigner(provider);
+  const hashconnect = walletData[0];
+  const saveData = walletData[1];
+  const provider = hashconnect.getProvider("testnet", saveData.topic, accountId);
+  const signer = hashconnect.getSigner(provider);
 
   const contractId = '0.0.34817836';
 
   const claimBalls = await new ContractExecuteTransaction()
-      .setContractId(contractId)
-      .setGas(1000000)
-      .setFunction("claimBalls")
-      .freezeWithSigner(signer);
+    .setContractId(contractId)
+    .setGas(1000000)
+    .setFunction("claimBalls")
+    .freezeWithSigner(signer);
 
   const txResponse = await claimBalls.executeWithSigner(signer);
   return txResponse;
@@ -221,7 +258,6 @@ export async function getStakedPlayers() {
 
   const contractUpdateResult = await contractCallQuery.execute(client);
   const amount = contractUpdateResult.bytes;
-  console.log(amount, Uint8ArrToNumber(amount));
   return amount;
 }
 
