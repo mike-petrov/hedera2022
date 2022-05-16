@@ -128,7 +128,7 @@ const App = () => {
     });
 
     if (!account && document.location.pathname !== '/') {
-      // document.location.href = '/';
+      document.location.href = '/';
     }
   }, []);
 
