@@ -19,8 +19,8 @@ const operatorId = AccountId.fromString(process.env.REACT_APP_ACCOUNT_ID);
 const operatorKey = PrivateKey.fromStringED25519(process.env.REACT_APP_PRIVATE_KEY);
 const client = Client.forTestnet().setOperator(operatorId, operatorKey);
 
-const contractPlayersId = '0.0.34826266';
-const contractGoalId = '0.0.34826270';
+const contractPlayersId = '0.0.34826667';
+const contractBallId = '0.0.34826712';
 
 function numberToUint256(value) {
   const hex = value.toString(16);
@@ -117,13 +117,13 @@ export async function getMintAmount(walletData, accountId, amount) {
 
   const getMintAmount = await new ContractExecuteTransaction()
     .setContractId(contractPlayersId)
-    .setGas(1000000)
+    .setGas(5000000)
     .setFunction(
       "mint",
       new ContractFunctionParameters()
       .addUint256(amount)
     )
-    .setPayableAmount(new Hbar(0.001 * amount))
+    .setPayableAmount(new Hbar(0.01 * amount))
     .freezeWithSigner(signer);
 
   const txResponse = await getMintAmount.executeWithSigner(signer);
@@ -137,7 +137,7 @@ export async function stakePlayer(walletData, accountId, playerId) {
   const signer = hashconnect.getSigner(provider);
 
   const stakePlayer = await new ContractExecuteTransaction()
-    .setContractId(contractGoalId)
+    .setContractId(contractBallId)
     .setGas(1000000)
     .setFunction(
       "stake",
@@ -157,7 +157,7 @@ export async function unstakePlayer(walletData, accountId, playerId) {
   const signer = hashconnect.getSigner(provider);
 
   const unstakePlayer = await new ContractExecuteTransaction()
-    .setContractId(contractGoalId)
+    .setContractId(contractBallId)
     .setGas(1000000)
     .setFunction(
       "unstake",
@@ -177,7 +177,7 @@ export async function upgradePlayer(walletData, accountId, playerId) {
   const signer = hashconnect.getSigner(provider);
 
   const upgradePlayer = await new ContractExecuteTransaction()
-    .setContractId(contractGoalId)
+    .setContractId(contractBallId)
     .setGas(1000000)
     .setFunction(
       "upgradePlayer",
@@ -197,7 +197,7 @@ export async function getClaimableView(walletData, accountId) {
   const signer = hashconnect.getSigner(provider);
 
   const getClaimableView = await new ContractExecuteTransaction()
-    .setContractId(contractGoalId)
+    .setContractId(contractBallId)
     .setGas(1000000)
     .setFunction("myClaimableView")
     .freezeWithSigner(signer);
@@ -223,7 +223,7 @@ export async function claimBalls(walletData, accountId) {
   const signer = hashconnect.getSigner(provider);
 
   const claimBalls = await new ContractExecuteTransaction()
-    .setContractId(contractGoalId)
+    .setContractId(contractBallId)
     .setGas(1000000)
     .setFunction("claimBalls")
     .freezeWithSigner(signer);
@@ -234,7 +234,7 @@ export async function claimBalls(walletData, accountId) {
 
 export async function getStakedPlayers() {
   const contractCallQuery = new ContractCallQuery()
-    .setContractId(contractGoalId)
+    .setContractId(contractBallId)
     .setGas(1000000)
     .setFunction("myStakedPlayers")
     .setQueryPayment(new Hbar(0.000001));
